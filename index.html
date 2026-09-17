@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download 3 Pictures</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f9;
+    }
+
+    .download-btn {
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      background-color: #007bff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .download-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .download-btn:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- The Download Button -->
+  <button id="downloadBtn" class="download-btn">Download 3 Pictures</button>
+
+  <script>
+    // 1. Array of image URLs to download
+    // (Replace these with your actual image URLs or local paths)
+    const imageUrls = [
+      'image1.png',
+      'image2.png',
+      'image3,png'
+    ];
+
+    // Helper function to download a single image using Fetch
+    async function downloadImage(url, filename) {
+      try {
+        // Fetch the image data
+        const response = await fetch(url);
+        const blob = await response.blob();
+
+        // Create an object URL for the blob
+        const blobUrl = URL.createObjectURL(blob);
+
+        // Create a temporary anchor element
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;
+
+        // Append to DOM, trigger click, and remove
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        // Clean up memory
+        URL.revokeObjectURL(blobUrl);
+      } catch (error) {
+        console.error(`Failed to download ${url}:`, error);
+      }
+    }
+
+    // Main function to trigger all downloads
+    async function downloadAllImages() {
+      const btn = document.getElementById('downloadBtn');
+      btn.disabled = true;
+      btn.innerText = "Downloading...";
+
+      // Loop through all images and download them
+      for (let i = 0; i < imageUrls.length; i++) {
+        const url = imageUrls[i];
+        const filename = `picture_${i + 1}.jpg`;
+        
+        // Add a small delay between downloads to prevent browsers from blocking them
+        await downloadImage(url, filename);
+        await new Promise(resolve => setTimeout(resolve, 300)); 
+      }
+
+      btn.disabled = false;
+      btn.innerText = "Download 3 Pictures";
+    }
+
+    // Attach click event listener to the button
+    document.getElementById('downloadBtn').addEventListener('click', downloadAllImages);
+  </script>
+
+</body>
+</html>>
